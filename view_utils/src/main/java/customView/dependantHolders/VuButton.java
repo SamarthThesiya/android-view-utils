@@ -8,10 +8,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class VuButton extends AppCompatButton implements View.OnClickListener {
 
-    public DependantHandler dependantHandler;
-    private OnClickListener onClickListener;
+    public  DependantHandler dependantHandler;
+    private OnClickListener  onClickListener;
+
     public VuButton(@NonNull Context context) {
         super(context);
         init();
@@ -34,8 +37,12 @@ public class VuButton extends AppCompatButton implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (dependantHandler.validateValidatables() && onClickListener != null) {
-            onClickListener.onClick(v);
+        try {
+            if (dependantHandler.validateValidatables() && onClickListener != null) {
+                onClickListener.onClick(v);
+            }
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 

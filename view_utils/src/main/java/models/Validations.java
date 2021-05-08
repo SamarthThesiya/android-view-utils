@@ -10,16 +10,19 @@ public class Validations implements BaseModel {
         validations = new ArrayList<>();
     }
 
-    public void add(String validation) {
+    public Validations add(String validation) {
         validations.add(new Validation(validation, null, null));
+        return this;
     }
 
-    public void add(String validation, Object extra) {
+    public Validations add(String validation, Object extra) {
         validations.add(new Validation(validation, extra, null));
+        return this;
     }
 
-    public void add(String validation, Object extra, String message) {
+    public Validations add(String validation, Object extra, String message) {
         validations.add(new Validation(validation, extra, message));
+        return this;
     }
 
     public Boolean remove(String validationString) {

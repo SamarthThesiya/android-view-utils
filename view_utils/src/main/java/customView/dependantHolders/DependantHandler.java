@@ -35,11 +35,11 @@ public class DependantHandler {
         validatables = new ArrayList<>();
     }
 
-    public Boolean validateValidatables() {
+    public Boolean validateValidatables() throws InvocationTargetException, IllegalAccessException {
 
         for (VuValidatable vuValidatable: validatables) {
 
-            Validations.Validation validationError = validate(vuValidatable.validations(), vuValidationMethods);
+            Validations.Validation validationError = validate(vuValidatable, vuValidationMethods);
             if (validationError != null) {
                 vuValidatable.handleValidationError(validationError);
                 return false;
@@ -48,12 +48,13 @@ public class DependantHandler {
         return true;
     }
 
-    private Validations.Validation validate(Validations validations, VuValidationMethods vuValidationMethods) {
+    private Validations.Validation validate(VuValidatable vuValidatable, VuValidationMethods vuValidationMethods) throws InvocationTargetException, IllegalAccessException {
         if (vuValidationMethods == null) {
             vuValidationMethods = new VuValidationMethods();
         }
+        vuValidationMethods.setVuValidatable(vuValidatable);
 
-        for (Validations.Validation validation : validations.getValidations()) {
+        for (Validations.Validation validation : vuValidatable.validations().getValidations()) {
 
             try {
                 Method  validationMethod   = vuValidationMethods.getClass().getMethod(validation.getValidation(), Validations.Validation.class);
@@ -67,8 +68,6 @@ public class DependantHandler {
                 }
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException("Method '" + validation.getValidation() + "' not found in class '" + vuValidationMethods.getClass().toString() + "'. If you used your custom class then please pass it while setDependent.");
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
             }
         }
         return null;

@@ -8,10 +8,13 @@ import models.Validations;
 
 public class VuValidationMethods {
 
-    VuValidatable vuValidatable;
-
+    protected VuValidatable vuValidatable;
     public static final String REQUIRED   = "required";
     public static final String MIN_LENGTH = "minLength";
+
+    public void setVuValidatable(VuValidatable vuValidatable) {
+        this.vuValidatable = vuValidatable;
+    }
 
     public Boolean required(Validations.Validation validation) {
         if (TextUtils.isEmpty(vuValidatable.getText())) {
