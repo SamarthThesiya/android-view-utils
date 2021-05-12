@@ -2,6 +2,7 @@ package customView;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -49,7 +50,10 @@ public class VuRecyclerView extends RecyclerView {
         @Override
         public VuViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             ViewDataBinding binding = ViewUtils.getDataBinding(layout, parent);
-            return new VuViewHolder(binding.getRoot(), binding);
+            if (binding != null) return new VuViewHolder(binding.getRoot(), binding);
+
+            View listItem = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
+            return new VuViewHolder(listItem, null);
         }
 
         @Override
