@@ -12,6 +12,26 @@ Easy to use and configurable library, **Which helps developer for rapid developm
 
 Here you can do some amazing stuff like validate EditText without single if condition, create recycler-view without adopter, etc.
 
+# Table of contents
+* [Features](#Features)
+* [Installation](#Installation)
+* [Usage](#Usage)
+    * Validations
+        * [Use built in validations](#Use-built-in-validations)
+            * [Use Required Validation](#Use-Required-Validation)
+            * [Use Minimun Length Validation](#Use-Minimun-Length-Validation)
+            * [Use Regex Validation](#Use-Regex-Validation)
+        * [Use Custom Validations](#Use-Custom-Validations)
+        * [Pro Tips](#Pro-Tips)
+    * [VuFragmentManager](#VuFragmentManager)
+        * [Use VuFragmentManager to populate fragment](#Use-VuFragmentManager-to-populate-fragment)
+        * [Use VuFragmentManager to manage wizard flow](#use-vufragmentmanager-to-manage-wizard-flow--what-is-wizard-flow-)
+        * [Use helper methods of VuFragmentManager](#Use-helper-methods-of-VuFragmentManager)
+        * [Use helper methods of FragmentStack](#Use-helper-methods-of-FragmentStack)
+    * VuRecyclerView
+        * [Implementation of Adaptorless Recycler By Using VuRecyclerView](#Implementation-of-Adaptorless-Recycler-By-Using-VuRecyclerView)
+* [Examples](#Examples)
+
 # Features:
 * Use built in validation like Required, Minimun length, Match regex, etc.
 * If you want own validations then you can create your also.
@@ -161,7 +181,7 @@ Here you can do some amazing stuff like validate EditText without single if cond
 
     vuButton.dependantHandler.setValidatables(vuEditText)
     ```
-## Use Your Own Validation
+## Use Custom Validations
 ### We will create own simple validation to validate that string should start with '+'.
 ##### 1. Create a class as below. Let's give it name "MyValidators".
 * JAVA
@@ -247,7 +267,7 @@ Here you can do some amazing stuff like validate EditText without single if cond
      // Don't forgot to setCustomValidatableMethods(), in case of custom validations
     vuButton.dependantHandler.setValidatables(vuEditText).setCustomValidatableMethods(MyValidators())
     ```
-## Pro Tip
+## Pro Tips
 ### You can apply validator on single VuEditText also
 ```
 VuEditText vuEditText = findViewById(R.id.et_vu_edit_text);
@@ -286,7 +306,87 @@ vuButton.dependantHandler.setValidatables(vuEditText).setCustomValidatableMethod
         return true;
     }
     ```
-## Implement Recycler View Without Adaptor
+## VuFragmentManager
+* ### Use VuFragmentManager to populate fragment
+    1. Create object of VuFragmentManager
+        ```
+        VuFragmentManager fragmentManager = new VuFragmentManager(this, R.id.frame_layout);
+        ```
+        It is the wrapper class of android's FragmentManager. So it requires object of FragmentManager. Now, if you have object of FragmentManager then you can pass it also to the 3rd param as below
+        ```
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        VuFragmentManager vuFragmentManager = new VuFragmentManager(this, R.id.frame_layout, fragmentManager);
+        ```
+    2. Populate Fragment
+        ```
+        // fragment is object of your fragment
+        fragmentManager.populateFragment(fragment, fragment.getClass().toString());
+        ```
+* ### Use VuFragmentManager to manage wizard flow ( [What is wizard flow](https://www.nngroup.com/articles/wizards/#:~:text=The%20wizard%20is%20a%20minapplication,information%20entered%20in%20previous%20ones.) )
+
+    1. Create object of VuFragmentManager as per [above](#Use-VuFragmentManager-to-populate-fragment).
+    2. Create object of FragmentStack
+        ```
+        int numberOfPagesInWizard = <int_number>;
+        boolean createNewFragmentOnRevisiting = false;
+        FragmentStakeCommunicator fragmentStakeCommunicator = this;
+
+        VuFragmentManager.FragmentStack fragmentStack = fragmentManager.getFragmentStack(numberOfPagesInWizard, fragmentStakeCommunicator, createNewFragmentOnRevisiting);
+        ```
+    3. Implement methods of FragmentStakeCommunicator
+        ```
+        @Override
+        public Fragment getFragmentFromByIndexNumber(int index) {
+
+            updatePage();
+            switch (index) {
+                case 0:
+                    return FirstFragment.newInstance();
+                case 1:
+                    return SecondFragment.newInstance();
+                case 2:
+                    return LoginFragment.newInstance();
+            }
+            return null;
+        }
+
+        @Override
+        public void fragmentStackOverflowed() {
+            Toast.makeText(this, "No more fragments", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public boolean fragmentStackUnderFlow() {
+            onBackPressed();
+
+            /**
+            * false => If you want to restrict user to exit the wizard.
+            * true => User will exit the wizard as normal behaviour of onBackPressed()
+            */
+            return true;
+        }
+        ```
+    4. Populate first and upcomming fragments
+        ```
+        fragmentStack.populateNextFragment();
+        ```
+    5. Populate previous fragment
+        ```
+        fragmentStack.popBackStack();
+        ```
+* ### Use helper methods of VuFragmentManager
+    * <b>Fragment getCurrentFragment()</b>: Returns object of fragment which is populated currenlty.
+    * <b>FragmentManager getFragmentManager()</b>: Returns android's fragmentManager.
+* ### Use helper methods of FragmentStack
+    * <b>int getCurrentFragmentIndex()</b>: Returns index of currently populated fragment. (For example, 0 means currently first fragment is populated, 1 means second, ...).
+    * <b>boolean isFirstFragment()</b>: Check if the populated fragment is first or not.
+    * <b>boolean isLastFragment()</b>: Check if the populated fragment is last or not.
+    * <b>void setBackButton(Button backButton)</b>: If you don't want to do extra work on popBackStack() then give object of back button to this function. It will manage popBackStack().
+    * <b>void setNextButton(Button nextButton)</b>: If you don't want to do extra work on populateNextFragment() then give object of next button to this function. It will manage populateNextFragment().
+    * <b>Fragment getFragment(int index)</b>: Returns the object of fragment by it's index.
+    * <b>Fragment[] getFragments()</b>: Returns array of all the fragments.
+    * <b>void setOnFragmentChangeListener(OnFragmentChangeListener onFragmentChangeListener)</b>: To set listener after every fragment change.
+## Implementation of Adaptorless Recycler By Using VuRecyclerView
  1. If you want to use data-binding in recycle-view's item then enable data-binding in app level gradle
     ```
         android {
@@ -485,3 +585,5 @@ vuButton.dependantHandler.setValidatables(vuEditText).setCustomValidatableMethod
         }
     });
     ```
+## Examples
+* For deep understanding of this library, Please refer this repository: <a href="https://github.com/SamarthThesiya/android-view-utils-examples">Android-View-Utils-Examples</a>. 
