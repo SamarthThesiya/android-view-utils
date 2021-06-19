@@ -33,9 +33,10 @@ Here you can do some amazing stuff like validate EditText without single if cond
 * [Examples](#Examples)
 
 # Features:
-* Use built in validation like Required, Minimun length, Match regex, etc.
-* If you want own validations then you can create your also.
-* To implement a recycler-view, you just need to create only xml file for List Item.
+* Use built in validation for EditText like Required, Minimum length, Match regex, etc.
+* If you want to create own validations then you can create your custom validations also.
+* You can implement fragments and fragment wizard ( [What is wizard flow](https://www.nngroup.com/articles/wizards/#:~:text=The%20wizard%20is%20a%20minapplication,information%20entered%20in%20previous%20ones.) ) by easiest way using VuFragmentManager and FragmentStack.
+* You can create RecyclerViews seamlessly by using our VuRecyclerView. Because, VuRecyclerView don't require any **Adapter** or **ViewHolder**
 
 # Installation
 1. Gradle dependency (Project Level):
